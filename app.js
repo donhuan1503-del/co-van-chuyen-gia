@@ -547,7 +547,7 @@ function simAns(v){
 }
 function simNext(){simCur.i++;simCur.fb=null;simRender();window.scrollTo(0,0);}
 
-var TABS=[["home","Hôm nay",viewHome],["lib","Chuyên đề",viewLib],["chat","Hỏi đáp",viewChat],["quiz","Luyện tập",viewQuiz],["sim","Tình huống",viewSim],["dk","Định khoản",viewDK],["calc","Máy tính",viewCalc],["bctc","Soát BCTC",viewBCTC],["upd","Văn bản mới",viewUpd]];
+var TABS=[["home","Hôm nay",viewHome],["lib","Chuyên đề",viewLib],["chat","Hỏi đáp",viewChat],["quiz","Luyện tập",viewQuiz],["sim","Tình huống",viewSim],["dk","Định khoản",viewDK],["calc","Máy tính",viewCalc],["bl","Lập BCTC",viewBL],["bctc","Soát BCTC",viewBCTC],["upd","Văn bản mới",viewUpd]];
 var tab="home";
 function render(){
   var nu=updatesRecent(3).length;
@@ -555,6 +555,7 @@ function render(){
   $("main").innerHTML=TABS.filter(function(x){return x[0]===tab;})[0][2]();
   window.scrollTo(0,0);
   if(tab==="lib")renderLib();
+  if(tab==="bl"){if(blCur)blRender();else blNew();}
   if(tab==="sim"){if(simCur)simRender();else simNew();}
   if(tab==="chat"){
     if(!chatHist.length)chatHist.push({who:"a",html:esc("Chào bạn! Mình là cố vấn về kế toán, thuế, kiểm toán, tài chính, lao động - BHXH và pháp lý doanh nghiệp Việt Nam (đối chiếu đến "+AS_OF+").\n\nHỏi một chủ đề, mình trả lời theo văn bản rồi hỏi ngược để bạn tự kiểm tra; kết quả được ghi vào điểm năng lực. Nút «Thầy ra đề về phần tôi yếu» sẽ đào sâu những chủ đề bạn còn lúng túng.")});
