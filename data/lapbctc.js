@@ -54,22 +54,26 @@ function BL_MAKE(){
     fields:[{k:"m110",l:"Mã 110 - Tiền và các khoản tương đương tiền, đồng",a:X.c111+X.c112},{k:"m130",l:"Mã 130 - Các khoản phải thu ngắn hạn, đồng",a:X.c131},{k:"m140",l:"Mã 140 - Hàng tồn kho, đồng",a:X.c156},{k:"m160",l:"Mã 160 - Tài sản ngắn hạn khác (161 + 162), đồng",a:X.c242+X.c133},{k:"m100",l:"Mã 100 - Tài sản ngắn hạn, đồng",a:tsnh},{k:"m220",l:"Mã 220 - Tài sản cố định (nguyên giá trừ hao mòn), đồng",a:tsdh},{k:"m280",l:"Mã 280 - Tổng cộng tài sản, đồng",a:tong},{k:"m314",l:"Mã 314 - Thuế và các khoản phải nộp Nhà nước ngắn hạn (3331 + 3334), đồng",a:X.c3331+X.extra},{k:"m310",l:"Mã 310 - Nợ ngắn hạn, đồng",a:no},{k:"m420",l:"Mã 420 - Lợi nhuận sau thuế chưa phân phối, đồng",a:X.e0+X.lnst},{k:"m400",l:"Mã 400 - Vốn chủ sở hữu, đồng",a:vcsh},{k:"m440",l:"Mã 440 - Tổng cộng nguồn vốn, đồng",a:no+vcsh},{k:"chk",l:"Chênh lệch mã 280 trừ mã 440 (phải bằng 0), đồng",a:0}],
     ex:["Mã 110 = 111 + 112 = "+(X.c111+X.c112).toLocaleString("vi-VN")+"; mã 130 = 131 = "+X.c131.toLocaleString("vi-VN")+"; mã 140 = 156 (kèm dự phòng nếu có) = "+X.c156.toLocaleString("vi-VN")+".","Mã 161 = dư Nợ 242 = "+X.c242.toLocaleString("vi-VN")+"; mã 162 = dư Nợ 133 = "+X.c133.toLocaleString("vi-VN")+"; mã 160 = "+(X.c242+X.c133).toLocaleString("vi-VN")+"; mã 100 = "+tsnh.toLocaleString("vi-VN")+".","Mã 220 = 211 - 214 = "+X.G.toLocaleString("vi-VN")+" - "+X.c214.toLocaleString("vi-VN")+" = "+tsdh.toLocaleString("vi-VN")+"; mã 280 = 100 + 200 = "+tong.toLocaleString("vi-VN")+".","Mã 314 = dư Có TK 333 (3331 + 3334) = "+(X.c3331+X.extra).toLocaleString("vi-VN")+"; mã 310 = 331 + 333 + 334 + 341 = "+no.toLocaleString("vi-VN")+".","Mã 420 = 421 = "+(X.e0+X.lnst).toLocaleString("vi-VN")+"; mã 400 = 411 + 420 = "+vcsh.toLocaleString("vi-VN")+"; mã 440 = 300 + 400 = "+(no+vcsh).toLocaleString("vi-VN")+". Mã 280 phải bằng mã 440; nếu lệch thì kiểm tra lại các bước trước."]}
   ];
+  X.fin="Kiểm tra cuối: lợi nhuận sau thuế "+X.lnst.toLocaleString("vi-VN")+" đồng; tổng tài sản "+tong.toLocaleString("vi-VN")+" đồng = tổng nguồn vốn.";
   return X;
 }
 
-/* ---------- Giao diện tab «Lập BCTC» ---------- */
-var blCur=null;
-function blNew(){blCur={co:BL_MAKE(),i:0,fb:null,ok:0};blRender();}
+/* ---------- Giao diện tab «Lập BCTC» (3 chế độ: cơ bản, nâng cao, lưu chuyển tiền tệ) ---------- */
+var blCur=null,blMode="cb";
+var BL_MODES=[["cb","Cơ bản: từ số dư đến B01 (5 bước)"],["nc","Nâng cao: giảm trừ doanh thu, dự phòng, thuế hoãn lại, thanh lý (6 bước)"],["lc","Lưu chuyển tiền tệ B03 gián tiếp (4 bước)"]];
+function blMaker(m){return m==="nc"?BL_MAKE2:(m==="lc"?BL_MAKE3:BL_MAKE);}
+function blNew(m){if(m)blMode=m;blCur={co:blMaker(blMode)(),i:0,fb:null,ok:0,mode:blMode};blRender();}
 function viewBL(){
-  return '<div class="row"><button class="b" onclick="blNew()">Bộ số liệu mới</button></div><div class="law" style="margin:8px 0">Lập báo cáo tài chính theo 5 bước nhỏ: điều chỉnh cuối kỳ → thuế TNDN → kết chuyển 911 → B02 → B01 (mã số TT 99/2025). Mỗi bước tự chấm, sai thì có lời giải từng dòng; số liệu chuẩn của bước trước luôn được nêu lại ở bước sau để bạn không bị sai dây chuyền.</div><div id="blbox" style="margin-top:8px"></div>';
+  return '<div class="card"><label>Chọn chế độ luyện</label><select onchange="blNew(this.value)">'+BL_MODES.map(function(x){return '<option value="'+x[0]+'"'+(blMode===x[0]?' selected':'')+'>'+esc(x[1])+'</option>';}).join("")+'</select><p style="margin-top:8px"><button class="b" onclick="blNew()">Bộ số liệu mới</button></p></div><div class="law" style="margin:8px 0">Lập báo cáo tài chính theo các bước nhỏ, mã số theo TT 99/2025. Mỗi bước tự chấm, sai thì có lời giải từng dòng; số liệu chuẩn của bước trước luôn được nêu lại ở bước sau để bạn không bị sai dây chuyền. Số âm: gõ dấu trừ trước số.</div><div id="blbox" style="margin-top:8px"></div>';
 }
 function blRender(){
   var el=$("blbox");if(!el)return;
-  var X=blCur.co,i=blCur.i,h='<div class="card"><h3>'+esc(X.name)+'</h3><div class="law">Bảng số dư tài khoản trước khi khóa sổ năm (đã cân Nợ = Có). Đơn vị: đồng.</div><details'+(i===0?' open':'')+'><summary>Xem bảng số dư</summary><table><tr><th>TK</th><th>Tên tài khoản</th><th class="n">Dư Nợ</th><th class="n">Dư Có</th></tr>';
-  var sn=0,sc=0;X.tb.forEach(function(r){sn+=r[2];sc+=r[3];h+='<tr><td>'+r[0]+'</td><td>'+esc(r[1])+'</td><td class="n">'+(r[2]?money(r[2]):"")+'</td><td class="n">'+(r[3]?money(r[3]):"")+'</td></tr>';});
-  h+='<tr><td></td><td><b>Cộng</b></td><td class="n"><b>'+money(sn)+'</b></td><td class="n"><b>'+money(sc)+'</b></td></tr></table></details></div>';
+  var X=blCur.co,i=blCur.i,cols=X.cols||["TK","Tên tài khoản","Dư Nợ","Dư Có"],h='<div class="card"><h3>'+esc(X.name)+'</h3><div class="law">'+esc(X.note||"Bảng số dư tài khoản trước khi khóa sổ năm (đã cân Nợ = Có). Đơn vị: đồng.")+'</div><details'+(i===0?' open':'')+'><summary>Xem số liệu đề bài</summary><table><tr><th>'+esc(cols[0])+'</th><th>'+esc(cols[1])+'</th><th class="n">'+esc(cols[2])+'</th><th class="n">'+esc(cols[3])+'</th></tr>';
+  var sn=0,sc=0;X.tb.forEach(function(r){sn+=r[2]||0;sc+=r[3]||0;h+='<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td class="n">'+(r[2]!==0&&r[2]!=null?money(r[2]):"")+'</td><td class="n">'+(r[3]!==0&&r[3]!=null?money(r[3]):"")+'</td></tr>';});
+  if(!X.noSum)h+='<tr><td></td><td><b>Cộng</b></td><td class="n"><b>'+money(sn)+'</b></td><td class="n"><b>'+money(sc)+'</b></td></tr>';
+  h+='</table></details></div>';
   if(i>=X.steps.length){
-    h+='<div class="card"><h3>Hoàn thành</h3><div class="ex"><b>'+blCur.ok+'/'+X.steps.length+' bước đúng hoàn toàn.</b></div><div class="law">Kiểm tra cuối: lợi nhuận sau thuế '+money(X.lnst)+' đồng; tổng tài sản '+money(X.steps[4].fields[6].a)+' đồng = tổng nguồn vốn.</div><p><button class="b" onclick="blNew()">Làm bộ số liệu mới</button></p></div>';
+    h+='<div class="card"><h3>Hoàn thành</h3><div class="ex"><b>'+blCur.ok+'/'+X.steps.length+' bước đúng hoàn toàn.</b></div><div class="law">'+esc(X.fin||"")+'</div><p><button class="b" onclick="blNew()">Làm bộ số liệu mới</button></p></div>';
     el.innerHTML=h;return;
   }
   var s=X.steps[i];
@@ -78,7 +82,7 @@ function blRender(){
     var st=blCur.fb&&blCur.fb.res[k];
     h+='<div style="margin-top:8px"><label>'+esc(f.l)+'</label><div class="row"><input id="blf'+k+'" inputmode="numeric" placeholder="'+(f.u==="%"?"nhập số %":"nhập số tiền (số âm: gõ dấu -)")+'"'+(blCur.fb?' value="'+esc(blCur.fb.vals[k])+'" disabled':'')+'>'+(st?'<span class="tag '+(st.ok?'g':'w')+'">'+(st.ok?'Đúng':'Chưa đúng: '+(f.u==="%"?f.a+"%":money(f.a)))+'</span>':'')+'</div></div>';
   });
-  if(!blCur.fb)h+='<p><button class="b" onclick="blCheck()">Chấm bước này</button></p>';
+  if(!blCur.fb)h+='<p><button class="b" onclick="blCheck()">Chấm bước này</button> <button class="b alt" onclick="blNext()">Bỏ qua bước này</button></p>';
   else{
     h+='<h4>Lời giải</h4><ul>'+s.ex.map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul><p><button class="b" onclick="blNext()">'+(i+1>=X.steps.length?'Xem tổng kết':'Bước tiếp theo')+'</button></p>';
   }
@@ -88,7 +92,7 @@ function blCheck(){
   var X=blCur.co,s=X.steps[blCur.i],res=[],vals=[],all=true,any=false;
   s.fields.forEach(function(f,k){var txt=$("blf"+k).value||"",raw=txt.replace(/[^0-9]/g,""),neg=/^\s*[-(−]/.test(txt),v=raw===""?null:(neg?-+raw:+raw);vals.push(txt);if(raw!=="")any=true;var ok=(v!==null&&v===f.a);res.push({ok:ok});if(!ok)all=false;});
   if(!any)return;
-  record("bctc","bl:"+s.id,all,"lap");
+  record("bctc","bl:"+blCur.mode+":"+s.id,all,"lap");
   if(all)blCur.ok++;
   blCur.fb={res:res,vals:vals};blRender();
 }

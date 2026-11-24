@@ -217,8 +217,12 @@ function pickTopic(pool){
   var tot=ws.reduce(function(a,b){return a+b;},0),r=Math.random()*tot;
   for(var i=0;i<pool.length;i++){r-=ws[i];if(r<=0)return pool[i];}return pool[0];
 }
+function qHidden(){return store("qhide")||{};}
+function qRestore(){store("qhide",{});render();}
+function qHide(i){var h=qHidden();h[i]=1;store("qhide",h);}
 function pickIdx(topic){
-  var cand=[];QUIZ.forEach(function(q,i){if(!topic||q.t===topic)cand.push(i);});
+  var hid=qHidden(),cand=[],all=[];QUIZ.forEach(function(q,i){if(!topic||q.t===topic){all.push(i);if(!hid[i])cand.push(i);}});
+  if(!cand.length)cand=all;
   if(!cand.length)return null;
   var ws=cand.map(function(i){return Math.max(0.05,qWeight(i));}),tot=ws.reduce(function(a,b){return a+b;},0),r=Math.random()*tot;
   for(var k=0;k<cand.length;k++){r-=ws[k];if(r<=0)return cand[k];}return cand[0];
@@ -229,15 +233,16 @@ function startTopic(t){
   S.mode="topic";S.topic=t;S.retry=[];S.asked=0;S.exam=null;tab="quiz";render();
 }
 function buildExam(){
-  var by={};QUIZ.forEach(function(q,i){(by[q.t]=by[q.t]||[]).push(i);});
+  var hid=qHidden(),by={};QUIZ.forEach(function(q,i){if(!hid[i])(by[q.t]=by[q.t]||[]).push(i);});
   var ids=[];Object.keys(by).forEach(function(t){ids.push(shuffle(by[t])[0]);});
-  var rest=shuffle(QUIZ.map(function(_,i){return i;}).filter(function(i){return ids.indexOf(i)<0;}));
+  var rest=shuffle(QUIZ.map(function(_,i){return i;}).filter(function(i){return ids.indexOf(i)<0&&!hid[i];}));
   while(ids.length<20&&rest.length)ids.push(rest.shift());
   S.exam={ids:shuffle(ids).slice(0,20),pos:0,res:[]};
 }
 function viewQuiz(){
   var h='<div class="card"><button class="b sm'+(S.mode==="weak"?'':' alt')+'" onclick="startPractice(\'weak\')">Luyện thích ứng</button><button class="b sm'+(S.mode==="exam"?'':' alt')+'" onclick="startPractice(\'exam\')">Kiểm tra 20 câu</button>';
   h+='<select style="margin-top:6px" onchange="if(this.value)startTopic(this.value)"><option value="">Chọn chủ đề để luyện...</option>'+Object.keys(TOPICS).filter(function(t){return !/^dk_/.test(t);}).map(function(t){return '<option value="'+t+'"'+(S.topic===t?" selected":"")+'>'+esc(TOPICS[t])+'</option>';}).join("")+'</select></div><div id="qbox"></div>';
+  var hc=Object.keys(qHidden()).length;if(hc)h+='<div class="law" style="margin-top:8px">Đã ẩn '+hc+' câu dễ. <button class="b alt sm" onclick="qRestore()">Khôi phục tất cả</button></div>';
   setTimeout(nextQ,0);return h;
 }
 function nextQ(){
@@ -255,7 +260,15 @@ function nextQ(){
   }
   S.answered=false;S.asked++;
   var q=QUIZ[S.idx];
-  box.innerHTML='<div class="card"><span class="tag">'+esc(topicLabel(q.t))+'</span>'+(S.mode==="exam"?'<span class="tag">Câu '+(S.exam.pos+1)+'/'+S.exam.ids.length+'</span>':'')+'<h3>'+esc(q.q)+'</h3>'+q.o.map(function(o,k){return '<button class="opt" id="o'+k+'" onclick="pickAns('+k+')">'+String.fromCharCode(65+k)+'. '+esc(o)+'</button>';}).join("")+'<div id="qfb"></div></div>';
+  box.innerHTML='<div class="card"><span class="tag">'+esc(topicLabel(q.t))+'</span>'+(S.mode==="exam"?'<span class="tag">Câu '+(S.exam.pos+1)+'/'+S.exam.ids.length+'</span>':'')+'<h3>'+esc(q.q)+'</h3>'+q.o.map(function(o,k){return '<button class="opt" id="o'+k+'" onclick="pickAns('+k+')">'+String.fromCharCode(65+k)+'. '+esc(o)+'</button>';}).join("")+'<div id="qtools" style="margin-top:8px"><button class="b alt sm" onclick="skipQ()">Bỏ qua</button> <button class="b alt sm" onclick="hideQ()">Câu dễ, đừng hỏi lại</button></div><div id="qfb"></div></div>';
+}
+function skipQ(){
+  if(S.mode==="exam"&&!S.answered){var q=QUIZ[S.idx];S.exam.res.push({i:S.idx,t:q.t,ok:false,skip:true});S.exam.pos++;}
+  nextQ();
+}
+function hideQ(){
+  qHide(S.idx);S.retry=S.retry.filter(function(r){return r.i!==S.idx;});
+  skipQ();
 }
 function pickAns(k){
   if(S.answered)return;S.answered=true;var q=QUIZ[S.idx],ok=(k===q.a);
@@ -267,13 +280,13 @@ function pickAns(k){
   $("qfb").innerHTML='<p><b>'+(ok?"Đúng!":"Chưa đúng - câu này sẽ quay lại sau vài câu.")+'</b> '+esc(q.e)+'</p><button class="b" onclick="nextQ()">Câu tiếp</button>';
 }
 function examReport(box){
-  var by={},c=0;S.exam.res.forEach(function(r){var b=by[r.t]||(by[r.t]=[0,0]);b[1]++;if(r.ok){b[0]++;c++;}});
-  var n=S.exam.res.length,score=Math.round(100*c/n),p=P(),prev=p.ex.length?p.ex[p.ex.length-1].score:null;
-  p.ex.push({ts:Date.now(),score:score,c:c,n:n});store("prog2",p);
-  var h='<div class="card"><h3>Kết quả: '+score+'% ('+c+'/'+n+')</h3>'+(prev!=null?'<div class="law">Lần trước: '+prev+'% → '+(score>prev?'tiến bộ +'+(score-prev):score<prev?'giảm '+(prev-score):'giữ nguyên')+' điểm %</div>':'')+'<table><tr><th>Chủ đề</th><th class="n">Đúng</th></tr>';
+  var by={},c=0,sk=S.exam.res.filter(function(r){return r.skip;}).length;S.exam.res.forEach(function(r){if(r.skip)return;var b=by[r.t]||(by[r.t]=[0,0]);b[1]++;if(r.ok){b[0]++;c++;}});
+  var n=S.exam.res.length-sk,score=n?Math.round(100*c/n):0,p=P(),prev=p.ex.length?p.ex[p.ex.length-1].score:null;
+  if(n>0){p.ex.push({ts:Date.now(),score:score,c:c,n:n});store("prog2",p);}
+  var h='<div class="card"><h3>Kết quả: '+score+'% ('+c+'/'+n+')</h3>'+(sk?'<div class="law">Bạn đã bỏ qua '+sk+' câu (không tính vào điểm).</div>':'')+(prev!=null?'<div class="law">Lần trước: '+prev+'% → '+(score>prev?'tiến bộ +'+(score-prev):score<prev?'giảm '+(prev-score):'giữ nguyên')+' điểm %</div>':'')+'<table><tr><th>Chủ đề</th><th class="n">Đúng</th></tr>';
   Object.keys(by).forEach(function(t){h+='<tr><td>'+esc(topicLabel(t))+'</td><td class="n">'+by[t][0]+'/'+by[t][1]+'</td></tr>';});
   h+='</table><h4>Các câu sai - xem đáp án</h4>';
-  S.exam.res.filter(function(r){return !r.ok;}).forEach(function(r){var q=QUIZ[r.i];h+='<div class="card"><b>'+esc(q.q)+'</b><div class="ex">Đáp án: '+esc(q.o[q.a])+' - '+esc(q.e)+'</div></div>';});
+  S.exam.res.filter(function(r){return !r.ok&&!r.skip;}).forEach(function(r){var q=QUIZ[r.i];h+='<div class="card"><b>'+esc(q.q)+'</b><div class="ex">Đáp án: '+esc(q.o[q.a])+' - '+esc(q.e)+'</div></div>';});
   h+='<button class="b" onclick="startPractice(\'weak\')">Luyện lại phần yếu</button><button class="b alt" onclick="startPractice(\'exam\')">Làm đề mới</button></div>';
   box.innerHTML=h;S.exam=null;
 }
@@ -512,9 +525,9 @@ function simRender(){
   var c=simCur,s=c.s,st=s.stages[c.i],n=s.stages.length,h=(simCh?'<div class="law">Thử thách: tình huống '+(simCh.k+1)+'/5</div>':'')+'<div class="card"><span class="tag">'+esc(c.t.role)+'</span><span class="tag">Mức '+c.t.level+'/3</span><span class="tag">'+esc(topicLabel(c.t.topic))+'</span><h3>'+esc(s.title)+'</h3>';
   h+='<ul>'+s.facts.map(function(f){return '<li>'+esc(f)+'</li>';}).join("")+'</ul>';
   if(c.i>=n){
-    var ok=c.res.filter(Boolean).length;
-    if(simCh&&!c.counted){c.counted=true;simCh.k++;simCh.ok+=ok;simCh.tot+=n;simCh.roles.push(c.t.role);}
-    h+='<div class="ex"><b>Kết quả: '+ok+'/'+n+' bước đúng.</b></div>';
+    var ok=c.res.filter(Boolean).length,sk=c.res.filter(function(x){return x===null;}).length,nn=n-sk;
+    if(simCh&&!c.counted){c.counted=true;simCh.k++;simCh.ok+=ok;simCh.tot+=nn;simCh.roles.push(c.t.role);}
+    h+='<div class="ex"><b>Kết quả: '+ok+'/'+nn+' bước đúng'+(sk?' (bỏ qua '+sk+' bước)':'')+'.</b></div>';
     h+='<h4>Bài học của chuyên gia</h4><div>'+esc(s.lesson)+'</div><div class="law">Căn cứ: '+esc(s.law)+'</div>'+(s.warn?'<div class="warn"><b>Lưu ý:</b> '+esc(s.warn)+'</div>':'');
     h+='<p><button class="b" onclick="simNew()">'+(simCh&&simCh.k>=5?'Xem tổng kết thử thách':simCh?'Tình huống tiếp theo ('+(simCh.k+1)+'/5)':'Tình huống tiếp theo')+'</button></p></div>';el.innerHTML=h;return;
   }
@@ -524,6 +537,7 @@ function simRender(){
     if(c.fb.model)h+='<ul>'+c.fb.model.map(function(m){return '<li>'+esc(m)+'</li>';}).join("")+'</ul>';
     h+='<p><button class="b" onclick="simNext()">'+(c.i+1>=n?'Xem bài học':'Bước tiếp theo')+'</button></p></div>';el.innerHTML=h;return;
   }
+  h+='<p style="margin:8px 0 0"><button class="b alt sm" onclick="simSkip()">Bỏ qua bước này</button> <button class="b alt sm" onclick="simCh=null;simNew()">Bỏ qua tình huống</button></p>';
   if(st.type==="mc")h+=st.o.map(function(o,i){return '<button class="b alt" style="display:block;width:100%;text-align:left;margin:6px 0" onclick="simAns('+i+')">'+esc(o)+'</button>';}).join("");
   else if(st.type==="num")h+='<div class="row" style="margin-top:8px"><input id="simin" inputmode="numeric" placeholder="Nhập số ('+esc(st.unit||"")+')"><button class="b" onclick="simAns()">Trả lời</button></div>';
   else h+='<textarea id="simin" rows="4" style="width:100%;margin-top:8px" placeholder="Viết câu trả lời của bạn..."></textarea><p><button class="b" onclick="simAns()">Trả lời</button></p>';
@@ -546,6 +560,7 @@ function simAns(v){
   c.res.push(ok);c.fb={ok:ok,msg:msg,model:model};simRender();
 }
 function simNext(){simCur.i++;simCur.fb=null;simRender();window.scrollTo(0,0);}
+function simSkip(){if(simCur.fb)return;simCur.res.push(null);simCur.i++;simRender();window.scrollTo(0,0);}
 
 var TABS=[["home","Hôm nay",viewHome],["lib","Chuyên đề",viewLib],["chat","Hỏi đáp",viewChat],["quiz","Luyện tập",viewQuiz],["sim","Tình huống",viewSim],["dk","Định khoản",viewDK],["calc","Máy tính",viewCalc],["bl","Lập BCTC",viewBL],["bctc","Soát BCTC",viewBCTC],["upd","Văn bản mới",viewUpd]];
 var tab="home";
