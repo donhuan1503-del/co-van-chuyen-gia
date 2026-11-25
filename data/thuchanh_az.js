@@ -4,7 +4,7 @@
    Quy ước chung: thuế GTGT 10%, phương pháp khấu trừ; thuế TNDN 20%; BHXH doanh nghiệp 17% (3% + 14%), BHYT 3%, BHTN 1%;
    người lao động 8%, 1,5%, 1%; bỏ qua bảo hiểm TNLĐ-BNN, kinh phí công đoàn và thuế TNCN để tập trung vào luồng nghiệp vụ.
    Tài khoản theo hệ thống TT 200 / TT 99/2025 (kiểm tra tên và số hiệu theo phần mềm đang dùng). Số liệu đơn vị: đồng; viết tắt "tr" = triệu. */
-var AZ_ACC={"111":"Tiền mặt","112":"Tiền gửi ngân hàng","131":"Phải thu của khách hàng","133":"Thuế GTGT được khấu trừ","141":"Tạm ứng","152":"Nguyên liệu, vật liệu","154":"Chi phí sản xuất kinh doanh dở dang","155":"Thành phẩm","156":"Hàng hóa","211":"Tài sản cố định hữu hình","214":"Hao mòn TSCĐ","242":"Chi phí trả trước","331":"Phải trả người bán","3331":"Thuế GTGT phải nộp","3334":"Thuế thu nhập doanh nghiệp","334":"Phải trả người lao động","3383":"Bảo hiểm xã hội","3384":"Bảo hiểm y tế","3386":"Bảo hiểm thất nghiệp","3387":"Doanh thu chưa thực hiện","411":"Vốn đầu tư của chủ sở hữu","421":"Lợi nhuận sau thuế chưa phân phối","511":"Doanh thu bán hàng và cung cấp dịch vụ","621":"Chi phí nguyên liệu, vật liệu trực tiếp","622":"Chi phí nhân công trực tiếp","627":"Chi phí sản xuất chung","632":"Giá vốn hàng bán","641":"Chi phí bán hàng","642":"Chi phí quản lý doanh nghiệp","821":"Chi phí thuế TNDN hiện hành","911":"Xác định kết quả kinh doanh"};
+var AZ_ACC={"111":"Tiền mặt","112":"Tiền gửi ngân hàng","131":"Phải thu của khách hàng","133":"Thuế GTGT được khấu trừ","141":"Tạm ứng","152":"Nguyên liệu, vật liệu","154":"Chi phí sản xuất kinh doanh dở dang","155":"Thành phẩm","156":"Hàng hóa","211":"Tài sản cố định hữu hình","214":"Hao mòn TSCĐ","242":"Chi phí trả trước","335":"Chi phí phải trả","1381":"Tài sản thiếu chờ xử lý","1388":"Phải thu khác","2293":"Dự phòng phải thu khó đòi","2294":"Dự phòng giảm giá hàng tồn kho","515":"Doanh thu hoạt động tài chính","635":"Chi phí tài chính","711":"Thu nhập khác","811":"Chi phí khác","331":"Phải trả người bán","3331":"Thuế GTGT phải nộp","3334":"Thuế thu nhập doanh nghiệp","334":"Phải trả người lao động","3383":"Bảo hiểm xã hội","3384":"Bảo hiểm y tế","3386":"Bảo hiểm thất nghiệp","3387":"Doanh thu chưa thực hiện","411":"Vốn đầu tư của chủ sở hữu","421":"Lợi nhuận sau thuế chưa phân phối","511":"Doanh thu bán hàng và cung cấp dịch vụ","621":"Chi phí nguyên liệu, vật liệu trực tiếp","622":"Chi phí nhân công trực tiếp","627":"Chi phí sản xuất chung","632":"Giá vốn hàng bán","641":"Chi phí bán hàng","642":"Chi phí quản lý doanh nghiệp","821":"Chi phí thuế TNDN hiện hành","911":"Xác định kết quả kinh doanh"};
 var AZ_CASES=[
 
 /* ============ A. THƯƠNG MẠI ============ */
@@ -155,6 +155,7 @@ function azRender(){
     return;
   }
   if(azView==="report"){azReport(box);return;}
+  if(azView==="tax"){azTaxRender(box);return;}
   /* làm nghiệp vụ */
   var t=c.txns[azIdx],p=azProg(c),h2='<div class="card"><span class="tag">'+esc(c.kind)+'</span><span class="tag g">Nghiệp vụ '+(azIdx+1)+'/'+c.txns.length+'</span><span class="tag">'+esc(t.date)+'</span><div style="margin:8px 0"><b>'+esc(t.desc)+'</b></div><div class="law">Chứng từ: '+esc(t.docs.join(", "))+'</div>';
   if(!azRows.length)azRows=[{s:"D",a:"",m:""},{s:"C",a:"",m:""}];
@@ -168,7 +169,7 @@ function azRender(){
   h2+='<p class="law"><a href="#" onclick="azView=\'intro\';azRender();return false">Hồ sơ công ty</a> · <a href="#" onclick="azView=\'list\';azRender();return false">Danh sách</a></p></div>';
   box.innerHTML=h2;
 }
-function azStart(id){azCase=AZ_CASES.filter(function(c){return c.id===id;})[0];var p=azProg(azCase),n=0;while(n<azCase.txns.length&&p.res[n])n++;azIdx=Math.min(n,azCase.txns.length-1);azRows=[];azFb=null;azTry=0;azView=n===0?"intro":"do";azRender();}
+function azStart(id){azCase=AZ_CASES.filter(function(c){return c.id===id;})[0];var p=azProg(azCase),n=0;while(n<azCase.txns.length&&p.res[n])n++;azIdx=Math.min(n,azCase.txns.length-1);azRows=[];azFb=null;azTry=0;azView=n===0?"intro":((azCase.tax&&n===azCase.tax.at&&!p.tax)?"tax":"do");azRender();}
 function azReset(id){var c=AZ_CASES.filter(function(x){return x.id===id;})[0];store(azKey(c),{res:[]});azCase=null;azView="list";azRender();}
 function azCheck(){
   var c=azCase,t=c.txns[azIdx],rows=azRows.filter(function(r){return r.a||r.m;}),lines=[],bad=false;
@@ -185,7 +186,7 @@ function azCheck(){
   azRender();
 }
 function azReveal(){var c=azCase,p=azProg(c);p.res[azIdx]=p.res[azIdx]||1;store(azKey(c),p);azFb={ok:false,msg:'Đáp án được hiển thị; hãy tự làm lại nghiệp vụ tương tự trước khi sang bài sau.'};azRender();}
-function azNext(){var c=azCase;azRows=[];azFb=null;azTry=0;if(azIdx+1<c.txns.length){azIdx++;}else{azView="report";}azRender();}
+function azNext(){var c=azCase;azRows=[];azFb=null;azTry=0;if(azIdx+1<c.txns.length){azIdx++;if(c.tax&&azIdx===c.tax.at&&!azProg(c).tax)azView="tax";}else{azView="report";}azRender();}
 function azReport(box){
   var c=azCase,L=azLedger(c),Lpre=azLedger(c,undefined,true),accs=Object.keys(L.bal).sort();
   var tb='<table><tr><th>TK</th><th>Tên</th><th style="text-align:right">Dư đầu Nợ</th><th style="text-align:right">Dư đầu Có</th><th style="text-align:right">PS Nợ</th><th style="text-align:right">PS Có</th><th style="text-align:right">Dư cuối Nợ</th><th style="text-align:right">Dư cuối Có</th></tr>',s=[0,0,0,0,0,0];
@@ -193,14 +194,48 @@ function azReport(box){
     var row=[o>0?o:0,o<0?-o:0,p[0],p[1],e>0?e:0,e<0?-e:0];row.forEach(function(v,i){s[i]+=v;});
     tb+='<tr><td>'+a+'</td><td>'+esc(AZ_ACC[a]||"")+'</td>'+row.map(function(v){return '<td class="n" style="text-align:right">'+(v?money(v):'')+'</td>';}).join("")+'</tr>';});
   tb+='<tr><th colspan="2">Cộng</th>'+s.map(function(v){return '<th style="text-align:right">'+money(v)+'</th>';}).join("")+'</tr></table>';
-  var b=Lpre.bal,ps=Lpre.ps,rev=(ps["511"]||[0,0])[1]-(ps["511"]||[0,0])[0],cogs=(ps["632"]||[0,0])[0]-(ps["632"]||[0,0])[1],sell=(ps["641"]||[0,0])[0]-(ps["641"]||[0,0])[1],adm=(ps["642"]||[0,0])[0]-(ps["642"]||[0,0])[1],gp=rev-cogs,pbt=gp-sell-adm,tax=(ps["821"]||[0,0])[0]-(ps["821"]||[0,0])[1],pat=pbt-tax;
-  var kq='<table><tr><td>Doanh thu bán hàng và cung cấp dịch vụ</td><td class="n" style="text-align:right">'+money(rev)+'</td></tr><tr><td>Giá vốn hàng bán</td><td class="n" style="text-align:right">'+money(cogs)+'</td></tr><tr><td><b>Lợi nhuận gộp</b></td><td class="n" style="text-align:right"><b>'+money(gp)+'</b></td></tr><tr><td>Chi phí bán hàng</td><td class="n" style="text-align:right">'+money(sell)+'</td></tr><tr><td>Chi phí quản lý doanh nghiệp</td><td class="n" style="text-align:right">'+money(adm)+'</td></tr><tr><td><b>Lợi nhuận trước thuế</b></td><td class="n" style="text-align:right"><b>'+money(pbt)+'</b></td></tr><tr><td>Chi phí thuế TNDN</td><td class="n" style="text-align:right">'+money(tax)+'</td></tr><tr><td><b>Lợi nhuận sau thuế</b></td><td class="n" style="text-align:right"><b>'+money(pat)+'</b></td></tr></table>';
+  var b=Lpre.bal,v=function(a){return b[a]||0;},rev=-v("511"),cogs=v("632"),sell=v("641"),adm=v("642"),fin=-v("515")-v("635"),oth=-v("711")-v("811"),gp=rev-cogs,pbt=gp-sell-adm+fin+oth,tax=v("821"),pat=pbt-tax;
+  var row=function(l,x,bold){return '<tr><td>'+(bold?'<b>':'')+l+(bold?'</b>':'')+'</td><td class="n" style="text-align:right">'+(bold?'<b>':'')+money(x)+(bold?'</b>':'')+'</td></tr>';};
+  var kq='<table>'+row("Doanh thu bán hàng và cung cấp dịch vụ",rev)+row("Giá vốn hàng bán",cogs)+row("Lợi nhuận gộp",gp,true)+(fin?row("Hoạt động tài chính (doanh thu trừ chi phí)",fin):"")+row("Chi phí bán hàng",sell)+row("Chi phí quản lý doanh nghiệp",adm)+(oth?row("Hoạt động khác (thu nhập trừ chi phí)",oth):"")+row("Lợi nhuận trước thuế",pbt,true)+row("Chi phí thuế TNDN",tax)+row("Lợi nhuận sau thuế",pat,true)+'</table>';
   var E=L.bal,sum=function(list,sign){return list.reduce(function(t,a){return t+(E[a]||0)*sign;},0);};
-  var cash=(E["111"]||0)+(E["112"]||0),recv=E["131"]||0,inv=(E["152"]||0)+(E["154"]||0)+(E["155"]||0)+(E["156"]||0),ppd=E["242"]||0,fa=(E["211"]||0)+(E["214"]||0),ass=cash+recv+(E["133"]||0)+inv+ppd+fa;
-  var pay=-(E["331"]||0),taxp=-((E["3331"]||0)+(E["3334"]||0)),emp=-((E["334"]||0)+(E["3383"]||0)+(E["3384"]||0)+(E["3386"]||0)),unr=-(E["3387"]||0),cap=-(E["411"]||0),re=-(E["421"]||0),src=pay+taxp+emp+unr+cap+re;
-  var bs='<table><tr><th colspan="2">Tài sản</th></tr><tr><td>Tiền (111, 112)</td><td class="n" style="text-align:right">'+money(cash)+'</td></tr><tr><td>Phải thu khách hàng</td><td class="n" style="text-align:right">'+money(recv)+'</td></tr><tr><td>Thuế GTGT được khấu trừ</td><td class="n" style="text-align:right">'+money(E["133"]||0)+'</td></tr><tr><td>Hàng tồn kho</td><td class="n" style="text-align:right">'+money(inv)+'</td></tr><tr><td>Chi phí trả trước</td><td class="n" style="text-align:right">'+money(ppd)+'</td></tr><tr><td>TSCĐ (nguyên giá trừ hao mòn)</td><td class="n" style="text-align:right">'+money(fa)+'</td></tr><tr><th>Tổng tài sản</th><th style="text-align:right">'+money(ass)+'</th></tr><tr><th colspan="2">Nguồn vốn</th></tr><tr><td>Phải trả người bán</td><td class="n" style="text-align:right">'+money(pay)+'</td></tr><tr><td>Thuế và các khoản phải nộp (GTGT, TNDN)</td><td class="n" style="text-align:right">'+money(taxp)+'</td></tr><tr><td>Phải trả người lao động và bảo hiểm</td><td class="n" style="text-align:right">'+money(emp)+'</td></tr><tr><td>Doanh thu chưa thực hiện</td><td class="n" style="text-align:right">'+money(unr)+'</td></tr><tr><td>Vốn đầu tư của chủ sở hữu</td><td class="n" style="text-align:right">'+money(cap)+'</td></tr><tr><td>Lợi nhuận sau thuế chưa phân phối</td><td class="n" style="text-align:right">'+money(re)+'</td></tr><tr><th>Tổng nguồn vốn</th><th style="text-align:right">'+money(src)+'</th></tr></table>';
+  var cash=(E["111"]||0)+(E["112"]||0),recv=(E["131"]||0)+(E["1388"]||0)+(E["2293"]||0),inv=(E["152"]||0)+(E["154"]||0)+(E["155"]||0)+(E["156"]||0)+(E["2294"]||0)+(E["1381"]||0),ppd=E["242"]||0,fa=(E["211"]||0)+(E["214"]||0),ass=cash+recv+(E["133"]||0)+inv+ppd+fa;
+  var pay=-(E["331"]||0),taxp=-((E["3331"]||0)+(E["3334"]||0)),emp=-((E["334"]||0)+(E["3383"]||0)+(E["3384"]||0)+(E["3386"]||0)),unr=-(E["3387"]||0),cap=-(E["411"]||0),re=-(E["421"]||0),accr=-(E["335"]||0),src=pay+accr+taxp+emp+unr+cap+re;
+  var bs='<table><tr><th colspan="2">Tài sản</th></tr><tr><td>Tiền (111, 112)</td><td class="n" style="text-align:right">'+money(cash)+'</td></tr><tr><td>Phải thu (khách hàng, khác, trừ dự phòng)</td><td class="n" style="text-align:right">'+money(recv)+'</td></tr><tr><td>Thuế GTGT được khấu trừ</td><td class="n" style="text-align:right">'+money(E["133"]||0)+'</td></tr><tr><td>Hàng tồn kho (trừ dự phòng)</td><td class="n" style="text-align:right">'+money(inv)+'</td></tr><tr><td>Chi phí trả trước</td><td class="n" style="text-align:right">'+money(ppd)+'</td></tr><tr><td>TSCĐ (nguyên giá trừ hao mòn)</td><td class="n" style="text-align:right">'+money(fa)+'</td></tr><tr><th>Tổng tài sản</th><th style="text-align:right">'+money(ass)+'</th></tr><tr><th colspan="2">Nguồn vốn</th></tr><tr><td>Phải trả người bán</td><td class="n" style="text-align:right">'+money(pay)+'</td></tr><tr><td>Chi phí phải trả</td><td class="n" style="text-align:right">'+money(accr)+'</td></tr><tr><td>Thuế và các khoản phải nộp (GTGT, TNDN)</td><td class="n" style="text-align:right">'+money(taxp)+'</td></tr><tr><td>Phải trả người lao động và bảo hiểm</td><td class="n" style="text-align:right">'+money(emp)+'</td></tr><tr><td>Doanh thu chưa thực hiện</td><td class="n" style="text-align:right">'+money(unr)+'</td></tr><tr><td>Vốn đầu tư của chủ sở hữu</td><td class="n" style="text-align:right">'+money(cap)+'</td></tr><tr><td>Lợi nhuận sau thuế chưa phân phối</td><td class="n" style="text-align:right">'+money(re)+'</td></tr><tr><th>Tổng nguồn vốn</th><th style="text-align:right">'+money(src)+'</th></tr></table>';
   var out=(Lpre.ps["3331"]||[0,0])[1],inn=(Lpre.ps["133"]||[0,0])[0],due=-(E["3331"]||0);
   var gt='<table><tr><td>Thuế GTGT đầu ra (Có 3331)</td><td class="n" style="text-align:right">'+money(out)+'</td></tr><tr><td>Thuế GTGT đầu vào được khấu trừ (Nợ 133)</td><td class="n" style="text-align:right">'+money(inn)+'</td></tr><tr><td><b>Thuế GTGT phải nộp</b></td><td class="n" style="text-align:right"><b>'+money(due)+'</b></td></tr></table>';
   var okbal=Math.abs(ass-src)<1&&Math.abs(s[0]-s[1])<1&&Math.abs(s[2]-s[3])<1&&Math.abs(s[4]-s[5])<1;
   box.innerHTML='<div class="card"><span class="tag g">'+esc(c.kind)+'</span><h3>Báo cáo cuối kỳ: '+esc(c.name)+'</h3><div class="'+(okbal?'ex':'warn')+'"><b>'+(okbal?'Các báo cáo cân đối: tổng tài sản bằng tổng nguồn vốn, bảng cân đối số phát sinh cân.':'Số liệu chưa cân.')+'</b></div><h4>Bảng cân đối số phát sinh</h4>'+tb+'<h4>Báo cáo kết quả kinh doanh (rút gọn)</h4>'+kq+'<h4>Bảng cân đối kế toán (rút gọn)</h4>'+bs+'<h4>Số liệu tờ khai thuế GTGT của kỳ</h4>'+gt+'<h4>Câu hỏi phân tích để làm như chuyên gia</h4><ul><li>Tỷ suất lợi nhuận gộp = '+(rev?Math.round(1000*gp/rev)/10:0)+'%. Có hợp lý so với ngành không? Biến động so với tháng trước vì sao?</li><li>Thuế GTGT phải nộp '+money(due)+' đồng: đối chiếu số đầu ra, đầu vào với bảng kê hóa đơn và tờ khai trước khi nộp.</li><li>Doanh thu, giá vốn, tồn kho có khớp nhau không (bán bao nhiêu thì giá vốn tương ứng)?</li><li>Cơ quan thuế sẽ hỏi gì: công nợ phải thu, hóa đơn lớn cuối kỳ, chi phí quản lý tăng bất thường, hóa đơn từ 5 triệu có chuyển khoản không?</li></ul><p><button class="b" onclick="azView=\'list\';azRender()">Về danh sách</button> <button class="b alt" onclick="azIdx=0;azView=\'do\';azRender()">Xem lại nghiệp vụ</button></p></div>';
 }
+
+/* ===== Bước quyết toán thuế TNDN (nếu công ty có khối tax) ===== */
+var azTaxAns={},azTaxDone=false;
+function azTaxData(c){
+  var L=azLedger(c,c.tax.at-1),b=L.bal,v=function(a){return b[a]||0;};
+  var income=-(v("511")+v("515")+v("711")),exp=v("632")+v("641")+v("642")+v("635")+v("811"),pbt=income-exp;
+  return {pbt:pbt};
+}
+function azTaxQs(c){
+  var d=azTaxData(c),t=c.tax,add=t.adds.reduce(function(x,y){return x+y[1];},0),tc=d.pbt+add-(t.exempt||0),tt=tc-t.loss,tax=Math.round(tt*t.rate/100);
+  return [
+   {k:"pbt",q:"Lợi nhuận kế toán trước thuế (đồng)?",ans:d.pbt,ex:"Tổng thu nhập (511, 515, 711) trừ tổng chi phí (632, 641, 642, 635, 811) sau khi đã ghi các bút toán điều chỉnh cuối năm."},
+   {k:"add",q:"Tổng các khoản điều chỉnh TĂNG thu nhập chịu thuế (đồng)?",ans:add,ex:"Cộng các khoản chi không được trừ trong bảng bên trên: "+t.adds.map(function(a){return a[0]+" "+money(a[1]);}).join("; ")+"."},
+   {k:"tc",q:"Thu nhập chịu thuế (đồng)?",ans:tc,ex:"Lợi nhuận trước thuế + khoản điều chỉnh tăng - thu nhập miễn thuế (Luật TNDN Điều 7)."},
+   {k:"tt",q:"Thu nhập tính thuế sau khi trừ lỗ năm trước chuyển sang (đồng)?",ans:tt,ex:"Thu nhập chịu thuế - lỗ được chuyển ("+money(t.loss)+" đồng, chuyển lỗ liên tục tối đa 05 năm, Điều 16)."},
+   {k:"rate",q:"Thuế suất TNDN áp dụng (nhập số %, ví dụ 17)?",ans:t.rate,ex:t.rateWhy},
+   {k:"tax",q:"Thuế TNDN phải nộp cả năm (đồng)?",ans:tax,ex:"Thu nhập tính thuế × thuế suất = "+money(tt)+" × "+t.rate+"% = "+money(tax)+" đồng."},
+   {k:"due",q:"Số thuế TNDN còn phải nộp sau khi trừ số đã tạm nộp "+money(t.paid)+" đồng (đồng; nếu nộp thừa nhập số âm)?",ans:tax-t.paid,ex:money(tax)+" - "+money(t.paid)+" = "+money(tax-t.paid)+" đồng."}
+  ];
+}
+function azTaxRender(box){
+  var c=azCase,t=c.tax,qs=azTaxQs(c);
+  var h='<div class="card"><span class="tag g">'+esc(c.kind)+'</span><span class="tag">Quyết toán thuế TNDN</span><h3>Xác định thuế TNDN năm</h3><div class="law">Sau khi ghi xong các bút toán điều chỉnh, bạn xác định thu nhập tính thuế và thuế phải nộp theo Luật TNDN 67/2025 (bản hợp nhất): các khoản chi không được trừ ở Điều 9 khoản 2, chứng từ thanh toán Điều 9 khoản 1 điểm c, chuyển lỗ Điều 16, thuế suất Điều 10.</div><h4>Dữ kiện để điều chỉnh</h4><table>'+t.facts.map(function(f){return '<tr><td>'+esc(f)+'</td></tr>';}).join("")+'</table><h4>Các khoản chi không được trừ cần cộng lại</h4><table>'+t.adds.map(function(a){return '<tr><td>'+esc(a[0])+'</td><td class="n" style="text-align:right">'+money(a[1])+'</td></tr>';}).join("")+'</table>';
+  if(!azTaxDone){
+    h+='<h4>Trả lời</h4><table>'+qs.map(function(q){return '<tr><td>'+esc(q.q)+'</td><td style="width:170px"><input placeholder="Số tiền" value="'+esc(azTaxAns[q.k]||"")+'" oninput="azTaxAns[\''+q.k+'\']=this.value"></td></tr>';}).join("")+'</table><p><button class="b" onclick="azTaxCheck()">Kiểm tra</button> <button class="b alt" onclick="azTaxReveal()">Xem đáp án</button></p>';
+  }else{
+    h+='<h4>Kết quả</h4><table>'+qs.map(function(q){var u=azParse(azTaxAns[q.k]),ok=Math.abs(u-q.ans)<1;return '<tr style="background:'+(ok?'rgba(30,120,60,.10)':'rgba(179,38,30,.10)')+'"><td>'+esc(q.q)+'<div class="law">'+esc(q.ex)+'</div></td><td class="n" style="text-align:right"><b>'+(q.k==="rate"?q.ans+'%':money(q.ans))+'</b><div class="law">Bạn: '+esc(azTaxAns[q.k]||"(bỏ trống)")+(ok?' ✔':' ✘')+'</div></td></tr>';}).join("")+'</table><p><button class="b" onclick="azTaxNext()">Tiếp tục ghi bút toán thuế và kết chuyển</button></p>';
+  }
+  h+='</div>';box.innerHTML=h;
+}
+function azTaxCheck(){azTaxDone=true;var c=azCase,qs=azTaxQs(c),okAll=qs.every(function(q){return Math.abs(azParse(azTaxAns[q.k])-q.ans)<1;});record("tndn","az:"+c.id+":tax",okAll,"az");azTaxRender($("azbox"));}
+function azTaxReveal(){azTaxDone=true;azTaxRender($("azbox"));}
+function azTaxNext(){var c=azCase,p=azProg(c);p.tax=true;store(azKey(c),p);azTaxDone=false;azTaxAns={};azView="do";azRender();}
