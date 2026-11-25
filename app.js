@@ -604,7 +604,7 @@ function renderVb(){
   box.innerHTML=h;
 }
 
-var TABS=[["home","Hôm nay",viewHome],["lib","Chuyên đề",viewLib],["chat","Hỏi đáp",viewChat],["quiz","Luyện tập",viewQuiz],["sim","Tình huống",viewSim],["dk","Định khoản",viewDK],["calc","Máy tính",viewCalc],["bl","Lập BCTC",viewBL],["bctc","Soát BCTC",viewBCTC],["vb","Văn bản gốc",viewVb],["upd","Văn bản mới",viewUpd]];
+var TABS=[["home","Hôm nay",viewHome],["lib","Chuyên đề",viewLib],["chat","Hỏi đáp",viewChat],["quiz","Luyện tập",viewQuiz],["sim","Tình huống",viewSim],["dk","Định khoản",viewDK],["calc","Máy tính",viewCalc],["bl","Lập BCTC",viewBL],["bctc","Soát BCTC",viewBCTC],["hunt","Săn lỗi",viewHunt],["vb","Văn bản gốc",viewVb],["upd","Văn bản mới",viewUpd]];
 var tab="home";
 function render(){
   var nu=updatesRecent(3).length;
@@ -612,6 +612,7 @@ function render(){
   $("main").innerHTML=TABS.filter(function(x){return x[0]===tab;})[0][2]();
   window.scrollTo(0,0);
   if(tab==="lib")renderLib();
+  if(tab==="hunt"){if(huntCur)huntRender();else huntNew();}
   if(tab==="bl"){if(blCur)blRender();else blNew();}
   if(tab==="sim"){if(simCur)simRender();else simNew();}
   if(tab==="chat"){
