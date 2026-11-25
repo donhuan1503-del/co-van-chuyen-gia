@@ -339,7 +339,7 @@ function viewCalc(){
   h+='<div class="card"><h3>1. Lương Gross ⇄ Net, TNCN, chi phí doanh nghiệp</h3><div class="row">'+
   '<div><label>Số tiền (đồng)</label><input id="c_amt" type="number" value="30000000"></div>'+
   '<div><label>Chiều tính</label><select id="c_dir"><option value="g2n">Gross → Net</option><option value="n2g">Net → Gross</option></select></div>'+
-  '<div><label>Biểu thuế</label><select id="c_tab"><option value="1">Mới 5 bậc (từ 01/07/2026)</option><option value="0">Cũ 7 bậc (đến 30/06/2026)</option></select></div>'+
+  '<div><label>Biểu thuế</label><select id="c_tab"><option value="1">Mới 5 bậc (kỳ tính thuế 2026 trở đi, Luật 109/2025)</option><option value="0">Cũ 7 bậc (kỳ tính thuế 2025 trở về trước)</option></select></div>'+
   '<div><label>Số người phụ thuộc</label><input id="c_nd" type="number" value="0" min="0"></div></div>'+
   '<div class="row"><div><label>Giảm trừ bản thân (đ/tháng)</label><input id="c_gt" type="number" value="15500000"></div>'+
   '<div><label>Giảm trừ mỗi người PT</label><input id="c_pt" type="number" value="6200000"></div>'+
