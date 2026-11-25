@@ -71,5 +71,16 @@ KB.push(
  ],
  warn:"Mới đọc các đoạn khấu trừ và giảm trừ gia cảnh; biểu thuế lũy tiến 5 bậc và mức giảm trừ 15,5/6,2 triệu nằm ở Luật 109/2025 và nghị quyết, chưa đọc nguyên văn trong tài liệu này. Bản gốc đọc bằng OCR.",
  tip:"Lập danh sách cộng tác viên: hợp đồng dưới 3 tháng hay không có hợp đồng, kiểm tra mức chi trả từng lần và cam kết 08/CK-TNCN (nếu có).",
- q:"Công ty trả tiền thù lao 8 triệu một lần cho cộng tác viên không ký hợp đồng lao động. Công ty phải làm gì và nếu cá nhân thu nhập thấp thì xử lý ra sao?",chk:["10%","khau tru","5 trieu","cam ket","giam tru gia canh"]}
+ q:"Công ty trả tiền thù lao 8 triệu một lần cho cộng tác viên không ký hợp đồng lao động. Công ty phải làm gì và nếu cá nhân thu nhập thấp thì xử lý ra sao?",chk:["10%","khau tru","5 trieu","cam ket","giam tru gia canh"]},
+
+{id:"qlt_nq63",d:"thue",t:"Nghị quyết 63/2026/QH16 - xử lý nợ lệ phí môn bài, tiền chậm nộp (MST trạng thái 03, 06)",conf:2,v:"11/2026",
+ law:"Nghị quyết 63/2026/QH16 của Quốc hội (thông qua tháng 11/2026); Công điện 36/CĐ-CT ngày 23/11/2026 của Cục Thuế. Tổng hợp từ báo chính thống/thư viện pháp luật - ĐỐI CHIẾU BẢN GỐC",
+ sec:[
+ {h:"Đối tượng",l:["Người nộp thuế có mã số thuế ở trạng thái 03 (ngừng hoạt động chưa chấm dứt MST) hoặc 06 (không hoạt động tại địa chỉ đã đăng ký), tính đến hết ngày 23/10/2026."]},
+ {h:"Nội dung chính (theo nguồn tổng hợp)",l:["Nợ lệ phí môn bài và tiền chậm nộp của khoản này được xóa; chưa kê khai, nộp lệ phí thì không phải kê khai, nộp và không bị tính tiền chậm nộp.","Tiền chậm nộp của các loại thuế khác: được xóa khi nộp đủ tiền thuế gốc và tiền phạt vi phạm hành chính (nếu có) và nộp hồ sơ hợp lệ đề nghị khôi phục hoặc chấm dứt hiệu lực MST.","Không xóa với hành vi trốn thuế, gian lận, dùng hóa đơn chứng từ không hợp pháp, hoặc có hoạt động kinh doanh trong thời gian ngừng/không hoạt động tại địa chỉ."]},
+ {h:"Hiệu lực",l:["Nguồn tổng hợp ghi hiệu lực từ 21/11/2026 đến hết 30/6/2028 (một số nguồn ghi ngày thông qua khác nhau)."]}
+ ],
+ warn:"Chưa đọc nguyên văn Nghị quyết; các điều, khoản và danh sách loại trừ chi tiết cần đối chiếu bản gốc trên Công báo/Cổng thông tin Quốc hội trước khi áp dụng.",
+ tip:"Rà danh sách khách hàng có MST trạng thái 03/06, kiểm tra nợ môn bài và tiền chậm nộp, lập hồ sơ khôi phục hoặc chấm dứt MST theo hướng dẫn của Cục Thuế.",
+ q:"Công ty X có MST trạng thái 03 đến 23/10/2026, nợ lệ phí môn bài và tiền chậm nộp của khoản này, không phát sinh kinh doanh. Chính sách theo Nghị quyết 63/2026/QH16 xử lý ra sao và cần lưu ý gì?",chk:["xoa","le phi mon bai","tien cham nop","trang thai 03","doi chieu"]}
 );
