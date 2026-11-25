@@ -32,6 +32,10 @@ Q("Cá nhân kinh doanh doanh thu trên 50 tỷ đồng chịu thuế suất tí
 Q("Tỷ lệ (doanh thu vượt mức miễn) áp dụng cho phân phối, cung cấp hàng hóa của cá nhân kinh doanh:","0,5%",["1%","1,5%","2%"],"Điều 7 khoản 3 điểm b.");
 Q("Tỷ lệ áp dụng cho dịch vụ, xây dựng không bao thầu nguyên vật liệu (trừ cho thuê tài sản, đại lý bảo hiểm, xổ số, đa cấp):","2%",["0,5%","1,5%","5%"],"Điều 7 khoản 3 điểm c.");
 Q("Cá nhân cho thuê bất động sản (không kể lưu trú) nộp thuế bằng phần doanh thu vượt mức miễn nhân:","5%",["2%","10%","15%"],"Điều 7 khoản 4.");
+Q("Theo NĐ 68/2026 đã được NĐ 141/2026 sửa đổi, hộ kinh doanh doanh thu năm từ bao nhiêu trở xuống không chịu GTGT và không phải nộp TNCN?","01 tỷ đồng",["200 triệu đồng","500 triệu đồng","03 tỷ đồng"],"NĐ 141/2026 Điều 1 thay 500 triệu đồng thành 01 tỷ đồng tại các điều của NĐ 68/2026.");
+Q("Hộ kinh doanh doanh thu năm trên 01 tỷ đồng phải sử dụng:","Hóa đơn điện tử có mã của cơ quan thuế hoặc hóa đơn khởi tạo từ máy tính tiền có kết nối dữ liệu với cơ quan thuế",["Hóa đơn giấy","Không cần hóa đơn","Chỉ biên lai"],"NĐ 68/2026 Điều 8 khoản 5 (sửa đổi bởi NĐ 141/2026).");
+Q("Hộ kinh doanh chọn phương pháp TNCN theo thu nhập tính thuế phải giữ ổn định phương pháp trong:","02 năm liên tục kể từ năm đầu áp dụng",["01 năm","03 năm","Không phải ổn định"],"NĐ 68/2026 Điều 4 khoản 5 điểm d.");
+Q("Doanh nghiệp có tổng doanh thu năm từ 01 tỷ đồng trở xuống (xác định theo năm trước liền kề):","Được miễn thuế TNDN (khoản 15 Điều 4 NĐ 320/2025 do NĐ 141/2026 bổ sung)",["Nộp 15%","Nộp 17%","Nộp tỷ lệ 1% doanh thu"],"NĐ 141/2026 Điều 2.");
 /* Số ngẫu nhiên: thuế biểu năm */
 function brk(tn){var br=[[120e6,0.05],[360e6,0.10],[720e6,0.20],[1200e6,0.30],[1e18,0.35]],t=0,pre=0;for(var i=0;i<br.length;i++){if(tn>pre)t+=(Math.min(tn,br[i][0])-pre)*br[i][1];pre=br[i][0];}return Math.round(t);}
 for(var i=0;i<14;i++){var tn=R(60,1500)*1e6,t=brk(tn);

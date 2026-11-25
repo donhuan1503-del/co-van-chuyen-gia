@@ -45,7 +45,7 @@ KB.push(
  {h:"Thu nhập khác (Điều 12-14)",l:["Đầu vốn (cổ tức, lãi): 5%.","Chuyển nhượng vốn: thu nhập tính thuế × 20%; không xác định được giá mua và chi phí: giá chuyển nhượng × 2%; chuyển nhượng chứng khoán: giá chuyển nhượng × 0,1%.","Chuyển nhượng bất động sản: giá chuyển nhượng × 2%."]}
  ],
  ex:"Lương 40 triệu/tháng, BH bắt buộc 4,2 triệu, một người phụ thuộc: 40 - 4,2 - 15,5 - 6,2 = 14,1 triệu → thuế = 10 × 5% + 4,1 × 10% = 0,91 triệu đồng.",
- warn:"Mức doanh thu miễn thuế của hộ, cá nhân kinh doanh và cách khấu trừ tạm thời tháng 1-6/2026 do nghị định, thông tư quy định (NĐ 253/2026, các văn bản liên quan); phần đó chưa nằm trong VBHN.",
+ warn:"Mức doanh thu miễn thuế của hộ, cá nhân kinh doanh: 01 tỷ đồng theo NĐ 68/2026 đã sửa bởi NĐ 141/2026 (thẻ tncn_nd68, đã đối chiếu). Cách khấu trừ tạm thời tháng 1-6/2026 do NĐ 253/2026 quy định (chưa đọc nguyên văn); các phần này không nằm trong VBHN.",
  tip:"Máy tính trong app dùng biểu 5 bậc cho kỳ tính thuế 2026; khi so với quyết toán 2025 hãy chọn biểu cũ 7 bậc.",
  q:"Hộ kinh doanh bán hàng hóa doanh thu 2,4 tỷ chọn tính thuế TNCN theo doanh thu: tỷ lệ nào, tính trên phần nào?",
  chk:["0,5%","vuot","muc","chinh phu"]},

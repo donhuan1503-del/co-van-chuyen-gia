@@ -33,7 +33,7 @@ SCEN.push(
   var sect=R.pick([{n:"phân phối, cung cấp hàng hóa",t:0.005},{n:"dịch vụ, xây dựng không bao thầu nguyên vật liệu",t:0.02},{n:"sản xuất, vận tải, dịch vụ gắn với hàng hóa, xây dựng có bao thầu nguyên vật liệu",t:0.015},{n:"hoạt động kinh doanh khác",t:0.01}]);
   var X=1000e6,Rv=R.step(1200e6,2800e6,100e6),cr=R.pick([0.62,0.7,0.78,0.85]),cost=Math.round(Rv*cr/1e6)*1e6,tnA=Rv-cost,taxA=Math.round(tnA*0.15),taxB=Math.round((Rv-X)*sect.t),lowerA=taxA<taxB;
   return {title:"Hộ kinh doanh: chọn cách tính thuế TNCN có lợi",
-   facts:["Cá nhân cư trú kinh doanh ngành "+sect.n+", doanh thu năm "+R.m(Rv)+" đồng, có sổ sách kế toán, chi phí hợp lý có chứng từ "+R.m(cost)+" đồng.","Theo nghị định hiện hành, mức doanh thu năm từ mức này trở xuống không phải nộp thuế TNCN: giả định "+R.m(X)+" đồng (Luật giao Chính phủ quy định mức; hãy tra mức mới nhất khi làm thực tế)."],
+   facts:["Cá nhân cư trú kinh doanh ngành "+sect.n+", doanh thu năm "+R.m(Rv)+" đồng, có sổ sách kế toán, chi phí hợp lý có chứng từ "+R.m(cost)+" đồng.","Theo NĐ 68/2026 đã được sửa bởi NĐ 141/2026 (đã đối chiếu nguyên văn), doanh thu năm từ "+R.m(X)+" đồng trở xuống không phải nộp thuế TNCN (Luật giao Chính phủ quy định mức)."],
    stages:[
     {type:"num",q:"Cách 1: thuế tính theo thu nhập tính thuế (doanh thu - chi phí) × 15% (đồng)?",ans:taxA,unit:"đồng",e:"Doanh thu "+R.m(Rv)+" trên mức miễn đến 03 tỷ đồng: thuế suất 15% (Điều 7 khoản 2 điểm b). Thu nhập tính thuế "+R.m(tnA)+" × 15% = "+R.m(taxA)+" đồng."},
     {type:"num",q:"Cách 2: thuế tính theo doanh thu = (doanh thu - mức miễn) × tỷ lệ của ngành (đồng)?",ans:taxB,unit:"đồng",e:"Tỷ lệ ngành này "+(sect.t*100)+"% (Điều 7 khoản 3). ("+R.m(Rv)+" - "+R.m(X)+") × "+(sect.t*100)+"% = "+R.m(taxB)+" đồng."},
@@ -41,7 +41,7 @@ SCEN.push(
     simMC("Nếu doanh thu năm vượt 03 tỷ đồng thì:","Không được chọn cách tính theo doanh thu; thuế tính theo thu nhập tính thuế với thuế suất 17% (trên 03 đến 50 tỷ đồng)",["Vẫn được chọn cách theo doanh thu","Được miễn thuế","Thuế suất cố định 15%"],"Điều 7 khoản 2 điểm c và khoản 3: cách theo doanh thu chỉ áp dụng cho doanh thu đến 03 tỷ đồng.")],
    law:"Luật TNCN 109/2025 (VBHN 112/VBHN-VPQH) Điều 7",
    lesson:"Với hộ, cá nhân kinh doanh doanh thu đến 03 tỷ đồng: tính cả hai cách và chọn cách thấp hơn, kèm chuẩn bị sổ sách, hóa đơn, chứng từ để dùng cách theo thu nhập.",
-   warn:"Mức doanh thu miễn thuế, thời điểm áp dụng, cách khai theo quý hay năm, hóa đơn bắt buộc: do nghị định, thông tư quy định, chưa đối chiếu nguyên văn."};}},
+   warn:"Cách khai theo quý hay năm, sổ sách, thời điểm áp dụng cụ thể: xem các điều khác của NĐ 68/2026 và thông tư (chưa đọc kỹ). Phương pháp tính theo thu nhập phải ổn định 02 năm liên tục (NĐ 68/2026 Điều 4)."};}},
 
 {id:"s_tncn_phan_loai",role:"Kế toán trưởng",topic:"tncn",level:2,make:function(R){
   var pool=[
