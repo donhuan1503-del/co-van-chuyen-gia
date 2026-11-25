@@ -5,7 +5,7 @@
 var HUNT = [
 
 {id:"h_mua_hang",topic:"ketoan",level:1,make:function(R){
-  var P=R.step(20e6,400e6,5e6),V=Math.round(P*0.1),T=P+V,v=R.int(0,4);
+  var P=R.step(20e6,400e6,5e6),V=Math.round(P*0.1),T=P+V,v=R.v(4);
   var f=["Mua hàng hóa nhập kho để bán lại. Hóa đơn GTGT của nhà cung cấp: giá chưa thuế "+R.m(P)+" đồng, thuế suất 10%, thuế GTGT "+R.m(V)+" đồng, tổng "+R.m(T)+" đồng.","Phiếu nhập kho đã lập đủ. Điều khoản: chưa thanh toán, 30 ngày sau trả bằng chuyển khoản."];
   var e=[{h:"Bút toán 1 - Ghi nhận mua hàng",l:[["Nợ","156",P],["Nợ","133",V],["Có","331",T]]}],fl=[];
   if(v===1){e[0].l[0][1]="642";fl.push({at:"0,0",type:"Sai tài khoản: hàng nhập kho ghi thẳng vào chi phí",fix:"Nợ 156 "+R.m(P),why:"Hàng mua để bán lại là hàng tồn kho (TK 156). Chi phí chỉ phát sinh khi bán hàng, qua giá vốn (TK 632) theo nguyên tắc phù hợp giữa doanh thu và chi phí.",risk:"Chi phí năm nay bị đẩy lên, lợi nhuận giảm; cơ quan thuế xem là khoản chi không tương ứng doanh thu (Luật TNDN Điều 9 khoản 2 điểm m) và nghi ngờ điều tiết lợi nhuận.",detect:"Đối chiếu tồn kho sổ sách với kiểm kê; tỷ lệ giá vốn/doanh thu thấp bất thường; hóa đơn mua lớn nhưng tồn kho không tăng.",prevent:"Nhập liệu mua hàng bắt buộc đi kèm phiếu nhập kho; phần mềm chặn ghi thẳng TK 642 cho hàng hóa.",law:"Nguyên tắc phù hợp; Luật TNDN Điều 9."});}
@@ -16,7 +16,7 @@ var HUNT = [
   return {title:"Ghi nhận mua hàng hóa nhập kho",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_ban_hang",topic:"ketoan",level:1,make:function(R){
-  var S=R.step(30e6,500e6,5e6),V=Math.round(S*0.1),T=S+V,C=Math.round(S*R.pick([0.62,0.7,0.78])/1e5)*1e5,v=R.int(0,3);
+  var S=R.step(30e6,500e6,5e6),V=Math.round(S*0.1),T=S+V,C=Math.round(S*R.pick([0.62,0.7,0.78])/1e5)*1e5,v=R.v(3);
   var f=["Bán hàng hóa cho khách, đã xuất hóa đơn GTGT: giá bán chưa thuế "+R.m(S)+" đồng, thuế 10% ("+R.m(V)+" đồng), tổng "+R.m(T)+" đồng. Khách đã chuyển khoản đủ vào tài khoản ngân hàng ngay trong ngày.","Hàng đã xuất kho giao khách, giá vốn bình quân "+R.m(C)+" đồng."];
   var e=[{h:"Bút toán 1 - Ghi nhận doanh thu",l:[["Nợ","112",T],["Có","511",S],["Có","3331",V]]},{h:"Bút toán 2 - Ghi nhận giá vốn",l:[["Nợ","632",C],["Có","156",C]]}],fl=[];
   if(v===1){e[0].l[1][1]="711";fl.push({at:"0,1",type:"Sai tài khoản doanh thu: ghi vào thu nhập khác",fix:"Có 511 "+R.m(S),why:"Bán hàng hóa thuộc hoạt động kinh doanh thường xuyên phải ghi vào doanh thu bán hàng (TK 511), không phải thu nhập khác (TK 711).",risk:"Doanh thu trên báo cáo kết quả kinh doanh thấp hơn tờ khai GTGT; ảnh hưởng thuế suất TNDN (căn cứ tổng doanh thu) và dễ bị cơ quan thuế đối chiếu chênh lệch.",detect:"Đối chiếu doanh thu tờ khai GTGT với chỉ tiêu doanh thu trên báo cáo tài chính và với hóa đơn bán ra.",prevent:"Danh mục tài khoản doanh thu theo loại hình; soát chênh lệch doanh thu GTGT và BCKQKD mỗi quý.",law:"Luật TNDN Điều 8, 10."});}
@@ -25,7 +25,7 @@ var HUNT = [
   return {title:"Ghi nhận doanh thu và giá vốn bán hàng",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_tiep_khach",topic:"gtgt",level:2,make:function(R){
-  var B=R.step(8e6,40e6,1e6),V=Math.round(B*0.1),T=B+V,v=R.int(0,2);
+  var B=R.step(8e6,40e6,1e6),V=Math.round(B*0.1),T=B+V,v=R.v(2);
   var f=["Chi phí tiếp khách phục vụ hoạt động kinh doanh, có hóa đơn GTGT hợp lệ: giá chưa thuế "+R.m(B)+" đồng, thuế 10% ("+R.m(V)+" đồng), tổng "+R.m(T)+" đồng."];
   var how=v===0?"Thanh toán bằng chuyển khoản qua tài khoản ngân hàng của công ty.":"Thanh toán bằng TIỀN MẶT.";
   f.push(how);
@@ -35,7 +35,7 @@ var HUNT = [
   return {title:"Chi phí tiếp khách và điều kiện khấu trừ thuế",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_phat_hc",topic:"tndn",level:2,make:function(R){
-  var F=R.step(2e6,40e6,1e6),v=R.int(0,2);
+  var F=R.step(2e6,40e6,1e6),v=R.v(2);
   var f=["Công ty bị cơ quan thuế ra quyết định xử phạt vi phạm hành chính "+R.m(F)+" đồng do vi phạm về hóa đơn; đã nộp phạt qua ngân hàng."];
   var e=[{h:"Bút toán 1 - Ghi nhận khoản phạt",l:[["Nợ",v===1?"642":"811",F],["Có","112",F]]}],fl=[];
   if(v===1)fl.push({at:"0,0",type:"Đưa tiền phạt vi phạm hành chính vào chi phí quản lý",fix:"Nợ 811 "+R.m(F)+" và điều chỉnh tăng thu nhập chịu thuế TNDN",why:"Khoản phạt vi phạm hành chính là chi phí khác (TK 811), không phải chi phí hoạt động. Khoản này không được trừ khi tính thuế TNDN.",risk:"Nếu không loại trừ khi quyết toán, thuế TNDN bị truy thu; ghi vào 642 làm cơ quan thuế khó nhận ra khoản phải loại, tăng rủi ro bị xác định cố tình.",detect:"Tìm từ khóa phạt, vi phạm trong sổ chi tiết 642; đối chiếu quyết định xử phạt đã nộp với bảng điều chỉnh quyết toán.",prevent:"Danh mục tài khoản có quy tắc: khoản phạt chỉ ghi 811; bảng điều chỉnh TNDN cuối năm liệt kê toàn bộ TK 811.",law:"Luật TNDN Điều 9 khoản 2 điểm b."});
@@ -43,7 +43,7 @@ var HUNT = [
   return {title:"Hạch toán tiền phạt vi phạm hành chính",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_luong_bh",topic:"bhxh",level:2,make:function(R){
-  var L=R.step(8e6,40e6,1e6),v=R.int(0,2),b1=Math.round(L*0.08),b2=Math.round(L*0.015),b3=Math.round(L*0.01),tot=b1+b2+b3;
+  var L=R.step(8e6,40e6,1e6),v=R.v(2),b1=Math.round(L*0.08),b2=Math.round(L*0.015),b3=Math.round(L*0.01),tot=b1+b2+b3;
   var f=["Lương làm căn cứ đóng BHXH của một người lao động: "+R.m(L)+" đồng/tháng. Phần người lao động đóng: BHXH 8%, BHYT 1,5%, BHTN 1% khấu trừ vào lương."];
   var e=[{h:"Bút toán 1 - Khấu trừ bảo hiểm vào lương người lao động",l:[["Nợ","334",tot],["Có","3383",b1],["Có","3384",b2],["Có","3386",b3]]}],fl=[];
   if(v===1){e[0].l=[["Nợ","334",tot],["Có","3383",b1],["Có","3384",b2+b3]];fl.push({at:"0,2",type:"Gộp bảo hiểm thất nghiệp vào tài khoản BHYT",fix:"Có 3384 "+R.m(b2)+"; Có 3386 "+R.m(b3),why:"Mỗi loại bảo hiểm phải theo dõi riêng để đối chiếu với thông báo của cơ quan BHXH.",risk:"Không đối chiếu được số phải nộp từng loại; nộp thiếu, nộp nhầm quỹ.",detect:"Đối chiếu sổ chi tiết 338 với thông báo đóng BHXH, BHYT, BHTN của cơ quan bảo hiểm.",prevent:"Sổ chi tiết riêng cho 3383, 3384, 3386.",law:"Luật BHXH 2024 Điều 33; Luật Kế toán Điều 6."});}
@@ -51,7 +51,7 @@ var HUNT = [
   return {title:"Khấu trừ bảo hiểm vào lương người lao động",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_khau_hao",topic:"ketoan",level:1,make:function(R){
-  var D=R.step(1e6,12e6,500000),v=R.int(0,2);
+  var D=R.step(1e6,12e6,500000),v=R.v(2);
   var f=["Trích khấu hao tháng cho máy móc phục vụ bộ phận quản lý: "+R.m(D)+" đồng."];
   var e=[{h:"Bút toán 1 - Trích khấu hao",l:[["Nợ","642",D],["Có","214",D]]}],fl=[];
   if(v===1){e[0].l[1][1]="211";fl.push({at:"0,1",type:"Ghi giảm trực tiếp nguyên giá TSCĐ thay vì tăng hao mòn lũy kế",fix:"Có 214 "+R.m(D),why:"Khấu hao ghi vào TK 214 (hao mòn lũy kế); nguyên giá TK 211 chỉ giảm khi thanh lý, nhượng bán.",risk:"Nguyên giá và giá trị còn lại trên báo cáo sai; bảng tính khấu hao tiếp theo bị lệch, chi phí khấu hao các kỳ sau sai.",detect:"Đối chiếu sổ TSCĐ chi tiết với tổng 211 và 214; nguyên giá giảm không có thanh lý.",prevent:"Phần mềm TSCĐ tự sinh bút toán khấu hao; kiểm tra 211, 214 hằng quý.",law:"Luật Kế toán Điều 6; Luật TNDN Điều 9 khoản 2 điểm e."});}
@@ -60,7 +60,7 @@ var HUNT = [
   return {title:"Trích khấu hao TSCĐ",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_tra_ncc",topic:"ketoan",level:1,make:function(R){
-  var X=R.step(10e6,300e6,1e6),v=R.int(0,2);
+  var X=R.step(10e6,300e6,1e6),v=R.v(2);
   var f=["Công ty chuyển khoản qua ngân hàng trả nợ nhà cung cấp "+R.m(X)+" đồng cho hóa đơn đã ghi nhận kỳ trước. Giấy báo nợ ngày hôm nay."];
   var e=[{h:"Bút toán 1 - Thanh toán công nợ",l:[["Nợ","331",X],["Có","112",X]]}],fl=[];
   if(v===1){e[0].l=[["Nợ","112",X],["Có","331",X]];fl.push({at:"0,0",type:"Đảo bên Nợ Có",fix:"Nợ 331 "+R.m(X),why:"Trả nợ làm giảm nợ phải trả: ghi Nợ 331 và Có 112.",risk:"Công nợ nhà cung cấp tăng gấp đôi chênh lệch, số dư tiền gửi tăng ảo.",detect:"Số dư 112 sổ sách lớn hơn sổ phụ ngân hàng; công nợ nhà cung cấp lệch.",prevent:"Đối chiếu sổ phụ ngân hàng hằng ngày.",law:"Luật Kế toán Điều 13 khoản 2."});
@@ -69,7 +69,7 @@ var HUNT = [
   return {title:"Thanh toán công nợ nhà cung cấp qua ngân hàng",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_khau_tru",topic:"gtgt",level:2,make:function(R){
-  var A=R.step(100e6,400e6,5e6),B=A+R.pick([-1,1])*R.step(10e6,80e6,5e6),mn=Math.min(A,B),mx=Math.max(A,B),v=R.int(0,2);
+  var A=R.step(100e6,400e6,5e6),B=A+R.pick([-1,1])*R.step(10e6,80e6,5e6),mn=Math.min(A,B),mx=Math.max(A,B),v=R.v(2);
   var f=["Cuối tháng: thuế GTGT đầu ra phát sinh (số dư Có TK 3331) "+R.m(A)+" đồng; thuế GTGT đầu vào đủ điều kiện khấu trừ (số dư Nợ TK 133) "+R.m(B)+" đồng. Doanh nghiệp tính thuế theo phương pháp khấu trừ."];
   var e=[{h:"Bút toán 1 - Khấu trừ thuế GTGT cuối kỳ",l:[["Nợ","3331",v===1?mx:mn],["Có","133",v===1?mx:mn]]}],fl=[];
   if(v===1){fl.push({at:"0,0",type:"Khấu trừ vượt số thuế đầu ra hoặc vượt số thuế đầu vào hiện có",fix:"Nợ 3331 / Có 133 "+R.m(mn)+" (số nhỏ hơn giữa đầu ra và đầu vào)",why:"Số khấu trừ tối đa bằng số nhỏ hơn giữa thuế đầu ra và thuế đầu vào; phần đầu vào còn lại chuyển kỳ sau (nếu đầu vào lớn hơn) hoặc phần đầu ra còn lại là số phải nộp.",risk:"Số dư 3331 hoặc 133 bị âm; tờ khai sai so với sổ; khai thiếu thuế phải nộp.",detect:"Số dư 133, 3331 sổ cái không khớp chỉ tiêu trên tờ khai 01/GTGT.",prevent:"Mẫu tính khấu trừ cuối kỳ: min(đầu ra, đầu vào); đối chiếu tờ khai.",law:"Luật GTGT Điều 14 khoản 1 điểm đ."});
@@ -81,7 +81,7 @@ var HUNT = [
   var TN=R.step(200e6,2000e6,10e6),cases=[
    {dtp:"2,6 tỷ đồng",rate:0.15,txt:"15% (doanh thu năm liền trước không quá 03 tỷ đồng)"},
    {dtp:"40 tỷ đồng",rate:0.17,txt:"17% (doanh thu năm liền trước trên 03 tỷ đến không quá 50 tỷ đồng)"},
-   {dtp:"120 tỷ đồng",rate:0.20,txt:"20% (doanh thu năm liền trước trên 50 tỷ đồng)"}],c=R.pick(cases),v=R.int(0,2),tax=Math.round(TN*c.rate);
+   {dtp:"120 tỷ đồng",rate:0.20,txt:"20% (doanh thu năm liền trước trên 50 tỷ đồng)"}],c=R.pick(cases),v=R.v(2),tax=Math.round(TN*c.rate);
   var f=["Quyết toán thuế TNDN năm: thu nhập tính thuế "+R.m(TN)+" đồng; tổng doanh thu của kỳ tính thuế liền trước là "+c.dtp+"."];
   var used=v===1?(c.rate===0.20?0.15:0.20):c.rate;
   var e=[{h:"Bút toán 1 - Ghi nhận chi phí thuế TNDN hiện hành",l:[["Nợ",v===2?"642":"821",Math.round(TN*used)],["Có","3334",Math.round(TN*used)]]}],fl=[];
@@ -91,7 +91,7 @@ var HUNT = [
   return {title:"Ghi nhận chi phí thuế TNDN và xác định thuế suất",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_tra_lai",topic:"ketoan",level:2,make:function(R){
-  var S=R.step(20e6,200e6,5e6),V=Math.round(S*0.1),T=S+V,C=Math.round(S*0.7/1e5)*1e5,v=R.int(0,2);
+  var S=R.step(20e6,200e6,5e6),V=Math.round(S*0.1),T=S+V,C=Math.round(S*0.7/1e5)*1e5,v=R.v(2);
   var f=["Khách trả lại hàng đã bán kỳ trước (không đạt chất lượng). Hai bên lập biên bản, người bán xuất hóa đơn điều chỉnh giảm: giá chưa thuế "+R.m(S)+" đồng, thuế 10% "+R.m(V)+" đồng, tổng "+R.m(T)+" đồng, trừ vào công nợ phải thu.","Hàng trả lại đã nhập kho trở lại, giá vốn trước đây "+R.m(C)+" đồng."];
   var e=[{h:"Bút toán 1 - Ghi giảm doanh thu và thuế",l:[["Nợ","521",S],["Nợ","3331",V],["Có","131",T]]},{h:"Bút toán 2 - Nhập kho lại, giảm giá vốn",l:[["Nợ","156",C],["Có","632",C]]}],fl=[];
   if(v===1){e.pop();fl.push({miss:true,type:"Thiếu bút toán nhập kho và giảm giá vốn của hàng trả lại",fix:"Nợ 156 "+R.m(C)+" / Có 632 "+R.m(C),why:"Hàng nhập lại kho phải ghi tăng tồn kho và giảm giá vốn đã ghi.",risk:"Giá vốn quá cao so với doanh thu còn lại, tồn kho sổ sách thiếu so với thực tế; lãi bị tính thấp, thuế TNDN sai.",detect:"Tồn kho thực tế nhiều hơn sổ; tỷ suất lãi gộp giảm bất thường sau kỳ có hàng trả lại.",prevent:"Mọi biên bản trả hàng gắn với phiếu nhập kho.",law:"Luật Kế toán Điều 6."});}
@@ -99,7 +99,7 @@ var HUNT = [
   return {title:"Hàng bán bị trả lại",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_ccdc",topic:"ketoan",level:2,make:function(R){
-  var m=R.pick([12,24,36]),P=m*R.step(1e6,5e6,500000),mo=Math.round(P/m),v=R.int(0,2);
+  var m=R.pick([12,24,36]),P=m*R.step(1e6,5e6,500000),mo=Math.round(P/m),v=R.v(2);
   var f=["Mua công cụ dụng cụ giá chưa thuế "+R.m(P)+" đồng (thuế 10%), thanh toán chuyển khoản. Doanh nghiệp phân bổ đều trong "+m+" tháng, đưa vào sử dụng ở bộ phận quản lý từ tháng này."];
   var V=Math.round(P*0.1);
   var e=[{h:"Bút toán 1 - Mua công cụ dụng cụ",l:[["Nợ","242",P],["Nợ","133",V],["Có","112",P+V]]},{h:"Bút toán 2 - Phân bổ tháng đầu tiên",l:[["Nợ","642",v===1?P:mo],["Có","242",v===1?P:mo]]}],fl=[];
@@ -109,7 +109,7 @@ var HUNT = [
   return {title:"Công cụ dụng cụ và chi phí trả trước",facts:f,entries:e,flaws:fl};}},
 
 {id:"h_cutoff",topic:"ketoan",level:3,make:function(R){
-  var S=R.step(100e6,800e6,10e6),V=Math.round(S*0.1),T=S+V,v=R.int(0,2);
+  var S=R.step(100e6,800e6,10e6),V=Math.round(S*0.1),T=S+V,v=R.v(2);
   var early=v!==0;
   var f=["Hợp đồng: quyền sở hữu hàng hóa chuyển giao cho khách khi khách nhận hàng tại kho khách. Giá bán chưa thuế "+R.m(S)+" đồng, thuế 10% "+R.m(V)+" đồng.",early?"Ngày 31/12 công ty xuất hóa đơn và ghi nhận doanh thu; nhưng xe giao hàng chỉ đến kho khách ngày 03/01 năm sau, khách ký biên bản nhận hàng ngày 03/01.":"Xe giao hàng đến kho khách và khách ký biên bản nhận hàng ngày 30/12; công ty xuất hóa đơn và ghi nhận doanh thu ngày 31/12."];
   var e=[{h:"Bút toán 1 - Ghi nhận doanh thu ngày 31/12",l:[["Nợ","131",T],["Có","511",S],["Có","3331",V]]}],fl=[];
@@ -121,15 +121,27 @@ var HUNT = [
 ];
 
 /* ===== Giao diện ===== */
+function HR(seed){
+  var a=seed|0,rng=function(){a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+  var r={forceV:null};
+  r.int=function(x,y){return x+Math.floor(rng()*(y-x+1));};
+  r.step=function(x,y,st){return x+st*Math.floor(rng()*((y-x)/st+1));};
+  r.pick=function(arr){return arr[Math.floor(rng()*arr.length)];};
+  r.v=function(n){var x=r.int(0,n);return r.forceV!==null?r.forceV:x;};
+  r.m=function(n){return money(n);};
+  return r;
+}
 var huntCur=null,huntSeen=[],huntStat={n:0,ok:0};
 function viewHunt(){
-  return '<div class="card"><b>Săn lỗi bút toán</b><div class="law">Đóng vai kiểm toán viên hoặc thanh tra thuế: xem dữ kiện, tích vào từng dòng bút toán mà bạn cho là SAI. Nếu thấy thiếu bút toán thì tích ô «Thiếu bút toán». Nếu mọi thứ đúng thì để trống và bấm Chấm. Kết quả: phân tích bản chất, rủi ro thuế, cách cơ quan thuế phát hiện và cách phòng tránh.</div></div><div id="huntbox"></div>';
+  return '<div class="card"><b>Săn lỗi bút toán</b><div class="law">Đóng vai kiểm toán viên hoặc thanh tra thuế: xem dữ kiện, tích vào từng dòng bút toán mà bạn cho là SAI. Nếu thấy thiếu bút toán thì tích ô «Thiếu bút toán». Nếu mọi thứ đúng thì để trống và bấm Chấm. Sau khi chấm: bút toán đúng hoàn chỉnh, đối chiếu dòng sai với dòng đúng, bản chất, rủi ro thuế, cách cơ quan thuế phát hiện, cách phòng tránh.</div></div><div id="huntbox"></div>';
 }
 function huntNew(){
   var pool=HUNT.filter(function(t){return huntSeen.indexOf(t.id)<0;});
   if(!pool.length){huntSeen=[];pool=HUNT;}
   var t=shuffle(pool)[0];huntSeen.push(t.id);
-  huntCur={t:t,s:t.make(SR()),sel:{},miss:false,done:false};huntRender();
+  var seed=Math.floor(Math.random()*2147483000)+1,s=t.make(HR(seed)),r2=HR(seed);r2.forceV=0;
+  try{s.good=t.make(r2).entries;}catch(e){s.good=null;}
+  huntCur={t:t,s:s,sel:{},miss:false,done:false};huntRender();
 }
 function huntToggle(k){if(huntCur.done)return;huntCur.sel[k]=!huntCur.sel[k];huntRender();}
 function huntMiss(){if(huntCur.done)return;huntCur.miss=!huntCur.miss;huntRender();}
@@ -141,6 +153,10 @@ function huntGrade(){
   var ok=okSet&&(c.miss===wantMiss);
   c.ok=ok;c.done=true;huntStat.n++;if(ok)huntStat.ok++;
   record(c.t.topic,"hunt:"+c.t.id,ok,"hunt");huntRender();
+}
+function huntLn(l){return l[0]+" "+l[1]+": "+money(l[2])+" đồng";}
+function huntTable(entries){
+  return entries.map(function(en){return '<h4>'+esc(en.h)+'</h4><table>'+en.l.map(function(ln){return '<tr><td><b>'+esc(ln[0])+' '+esc(ln[1])+'</b></td><td class="n" style="text-align:right">'+money(ln[2])+'</td></tr>';}).join("")+'</table>';}).join("");
 }
 function huntRender(){
   var box=$("huntbox");if(!box)return;
@@ -159,10 +175,16 @@ function huntRender(){
   h+='<p><label><input type="checkbox" '+(c.miss?'checked ':'')+(c.done?'disabled ':'')+'onclick="huntMiss()" style="width:auto"> Thiếu bút toán cần ghi'+(c.done&&wantMiss?' ✔ đúng, có thiếu':'')+(c.done&&!wantMiss&&c.miss?' ✘ không thiếu':'')+'</label></p>';
   if(!c.done){h+='<p><button class="b" onclick="huntGrade()">Chấm</button> <button class="b alt" onclick="huntNew()">Bỏ qua</button></p></div>';}
   else{
-    h+='<div class="ex"><b>'+(c.ok?'Chính xác.':'Chưa đúng hoàn toàn.')+'</b> '+(s.flaws.length?'Bộ chứng từ này có '+s.flaws.length+' điểm sai.':'Bút toán này ĐÚNG, không có lỗi: đây là bài kiểm tra bạn có kết luận đúng, không báo lỗi thừa.')+'</div>';
-    var seen={};
-    s.flaws.forEach(function(f){var key=f.type;if(seen[key])return;seen[key]=1;
-      h+='<div class="card" style="margin-top:8px"><span class="tag w">'+esc(f.type)+'</span><div><b>Ghi đúng:</b> '+esc(f.fix)+'</div><h4>Bản chất</h4><div>'+esc(f.why)+'</div><h4>Rủi ro thuế</h4><div>'+esc(f.risk)+'</div><h4>Cơ quan thuế phát hiện bằng cách nào</h4><div>'+esc(f.detect)+'</div><h4>Cách phòng tránh</h4><div>'+esc(f.prevent)+'</div><div class="law">Căn cứ: '+esc(f.law)+'</div></div>';});
+    var types={};s.flaws.forEach(function(f){types[f.type]=1;});
+    h+='<div class="ex"><b>'+(c.ok?'Chính xác.':'Chưa đúng hoàn toàn.')+'</b> '+(s.flaws.length?'Bộ chứng từ này có '+s.flaws.length+' dòng sai thuộc '+Object.keys(types).length+' loại lỗi.':'Bút toán này ĐÚNG, không có lỗi: đây là bài kiểm tra bạn có kết luận đúng, không báo lỗi thừa.')+'</div>';
+    if(s.good&&s.flaws.length){h+='<h3 style="margin-top:12px">Bút toán đúng hoàn chỉnh</h3>'+huntTable(s.good);}
+    var groups={},order=[];
+    s.flaws.forEach(function(f){var g=groups[f.type];if(!g){g=groups[f.type]={f:f,ats:[],miss:false};order.push(f.type);}if(f.miss)g.miss=true;else g.ats.push(f.at);});
+    order.forEach(function(ty,gi){var g=groups[ty],f=g.f,rows="";
+      g.ats.forEach(function(at){var p=at.split(","),bad=s.entries[+p[0]]&&s.entries[+p[0]].l[+p[1]],gd=s.good&&s.good[+p[0]]&&s.good[+p[0]].l.length===s.entries[+p[0]].l.length&&s.good[+p[0]].l[+p[1]];if(gd&&bad&&gd[0]!==bad[0])gd=null;
+        rows+='<tr><td>'+esc(bad?huntLn(bad):"")+'</td><td>→</td><td>'+esc(gd?huntLn(gd):"(xem bút toán đúng hoàn chỉnh ở trên)")+'</td></tr>';});
+      if(g.miss)rows+='<tr><td>(không có bút toán)</td><td>→</td><td>'+esc(f.fix)+'</td></tr>';
+      h+='<div class="card" style="margin-top:10px"><span class="tag w">Lỗi '+(gi+1)+'</span><b> '+esc(f.type)+'</b>'+(rows?'<h4>Dòng sai → dòng đúng</h4><table>'+rows+'</table>':'')+'<h4>Cần ghi đúng</h4><div>'+esc(f.fix)+'</div><h4>Vì sao đây là lỗi (bản chất)</h4><div>'+esc(f.why)+'</div><h4>Rủi ro thuế và hệ quả</h4><div>'+esc(f.risk)+'</div><h4>Cơ quan thuế, kiểm toán phát hiện bằng cách nào</h4><div>'+esc(f.detect)+'</div><h4>Cách phòng tránh</h4><div>'+esc(f.prevent)+'</div><div class="law">Căn cứ: '+esc(f.law)+'</div><h4>Tự kiểm tra bằng 4 câu hỏi</h4><div class="law">1) Nghiệp vụ thực chất là gì? 2) Tài khoản đối ứng nào đúng bản chất? 3) Số tiền khớp hóa đơn, chứng từ thanh toán chưa? 4) Thời điểm ghi nhận và hồ sơ thuế (điều kiện khấu trừ, chi phí được trừ) đã đủ chưa?</div></div>';});
     if(!s.flaws.length)h+='<div class="law">Kiểm tra lại: tài khoản đúng bản chất, số tiền khớp hóa đơn và chứng từ thanh toán, bút toán đủ và cân Nợ - Có.</div>';
     h+='<p><button class="b" onclick="huntNew()">Bài tiếp theo</button></p></div>';
   }
