@@ -604,7 +604,7 @@ function renderVb(){
   box.innerHTML=h;
 }
 
-var TABS=[["home","Hôm nay",viewHome],["lib","Chuyên đề",viewLib],["chat","Hỏi đáp",viewChat],["quiz","Luyện tập",viewQuiz],["sim","Tình huống",viewSim],["dk","Định khoản",viewDK],["calc","Máy tính",viewCalc],["bl","Lập BCTC",viewBL],["bctc","Soát BCTC",viewBCTC],["hunt","Săn lỗi",viewHunt],["vb","Văn bản gốc",viewVb],["upd","Văn bản mới",viewUpd]];
+var TABS=[["home","Hôm nay",viewHome],["lib","Chuyên đề",viewLib],["chat","Hỏi đáp",viewChat],["quiz","Luyện tập",viewQuiz],["sim","Tình huống",viewSim],["dk","Định khoản",viewDK],["calc","Máy tính",viewCalc],["bl","Lập BCTC",viewBL],["bctc","Soát BCTC",viewBCTC],["az","Thực hành A-Z",viewAZ],["hunt","Săn lỗi",viewHunt],["vb","Văn bản gốc",viewVb],["upd","Văn bản mới",viewUpd]];
 var tab="home";
 function render(){
   var nu=updatesRecent(3).length;
